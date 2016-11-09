@@ -1,6 +1,7 @@
 flights <- read.csv('2008.csv')
 library(stringr)
 library(chron)
+library(Hmisc)
 
 dep_time <- str_pad(flights$DepTime, 4, pad = "0")
 hour <- substring(dep_time,1,2)
@@ -48,7 +49,6 @@ flights <- transform(flights, DepTime = chron(times=ifelse(is.na(DepTime), mean(
 flights <- transform(flights, AirTime = ifelse(is.na(AirTime), mean(AirTime, na.rm=TRUE), AirTime))
 
 
-library(Hmisc)
 flights$ArrDelay <- impute(flights$ArrDelay ,mean)
 
 flights$CRSElapsedTime <- impute(flights$CRSElapsedTime,median)
@@ -57,26 +57,26 @@ lm_dep_delay <- lm (DepDelay ~ ArrTime+AirTime+ArrDelay +DepTime,data=flights)
 
 pred_dep_delay <- predict (lm_dep_delay, flights)
 
-impute <- function (a, a_impute){
+impute_pred <- function (a, a_impute){
   ifelse (is.na(a), a_impute, a)
 }
 
-flights$DepDelay <- impute (flights$DepDelay, pred_dep_delay) 
+flights$DepDelay <- impute_pred (flights$DepDelay, pred_dep_delay) 
 
 lm_actual_elapsed_time <- lm (ActualElapsedTime ~ArrTime+AirTime+ArrDelay +DepTime+DepDelay,data=flights)
 
 pred_actual_elapsed_time <- predict (lm_actual_elapsed_time, flights)
 
-flights$ActualElapsedTime <- impute (flights$ActualElapsedTime, pred_actual_elapsed_time) 
+flights$ActualElapsedTime <- impute_pred (flights$ActualElapsedTime, pred_actual_elapsed_time) 
 
 lm_taxi_in <- lm (TaxiIn ~ArrTime+AirTime+ArrDelay +DepTime+DepDelay,data=flights)
 
 pred_taxi_in <- predict (lm_taxi_in, flights)
 
-flights$TaxiIn <- impute (flights$TaxiIn, pred_taxi_in) 
+flights$TaxiIn <- impute_pred (flights$TaxiIn, pred_taxi_in) 
 
 lm_taxi_out <- lm (TaxiOut ~ArrTime+AirTime+ArrDelay +DepTime+DepDelay,data=flights)
 
 pred_taxi_out <- predict (lm_taxi_out, flights)
 
-flights$TaxiOut <- impute (flights$TaxiOut, pred_taxi_out) 
+flights$TaxiOut <- impute_pred (flights$TaxiOut, pred_taxi_out) 
