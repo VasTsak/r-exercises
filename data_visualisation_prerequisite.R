@@ -140,11 +140,18 @@ flights$DayofMonth <- as.character(flights$DayofMonth)
 flights <- flights %>% mutate(Full_Date = chron(date=paste(Month,DayofMonth,Year,sep='/')))
 flights %>% select(Full_Date)
 
-flights %>% group_by(Full_Date)%>% summarise(Number_of_flights = n())%>%arrange(desc(Number_of_flights))
+flights %>% group_by(Full_Date)%>% 
+summarise(Number_of_flights = n())%>%
+arrange(desc(Number_of_flights))
 
-flights %>% group_by(Full_Date)%>% summarise(Number_of_flights = n(),Ratio_of_Cancelled = mean(Cancelled))%>%arrange(desc(Ratio_of_Cancelled))%>% select(Full_Date,Number_of_flights,Ratio_of_Cancelled)
+flights %>% group_by(Full_Date)%>%
+summarise(Number_of_flights = n(),Ratio_of_Cancelled = mean(Cancelled))%>%
+arrange(desc(Ratio_of_Cancelled))%>%
+select(Full_Date,Number_of_flights,Ratio_of_Cancelled)
 
-flights %>% group_by(Full_Date)%>% summarise(Mean_ArrDelay= mean(ArrDelay))
+flights %>%
+group_by(Full_Date)%>%
+summarise(Mean_ArrDelay= mean(ArrDelay))
 
 # if you wish to save the dataset for the other exercises to come, run the command below
 #write.csv(flights,'flights_2008.csv')
