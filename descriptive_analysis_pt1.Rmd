@@ -1,0 +1,97 @@
+---
+title: "Descriptive Analysis Part 1"
+author: "Vasileios Tsakalos"
+date: "2 January 2017"
+output: html_document
+---
+```{r pressure, echo=FALSE}
+library(repmis)
+source_data("https://github.com/VasTsak/r-exercises/blob/master/flights.RData?raw=true")
+library(shiny)
+```
+
+```{r pressure, echo=FALSE}
+ui <- fluidPage(pageWithSidebar(
+  
+  # Application title
+  #1
+  headerPanel("Descriptive Analysis"),
+  
+  # Sidebar with controls to select the variable to plot against mpg
+  # and to specify whether outliers should be included
+  #2
+  sidebarPanel(
+    #3
+    selectInput("fun",
+                h3("Select functions"),
+                list("Summary" = 1, 
+                     "Structure" = 2, 
+                     "Head" = 3,
+                     "Tail"=4,"Names"=5),selected = 1 ),
+    #4
+    selectInput("me",
+              h3("Select measure"),
+              list("Mean" = 1, 
+                   "Median" = 2, 
+                   "Max" = 3,
+                   "Min"=4,"Range"=5,"Standard  Deviation"=6),selected = 1 ),
+    #5
+    selectInput("var",
+              h3("Select variable"),
+              list("ActualElapsedTime" = "ActualElapsedTime", 
+                   "CRSElapsedTime" = "CRSElapsedTime", 
+                   "AirTime" = "AirTime",
+                   "ArrDelay"="ArrDelay","DepDelay"="DepDelay","TaxiIn"="TaxiIn","TaxiOut"="TaxiOut"),selected = "ActualElapsedTime" )),
+ #6
+   mainPanel(tabsetPanel(
+     #7
+    tabPanel("Content",verbatimTextOutput("cont")),
+    tabPanel("Measures",verbatimTextOutput("meas"))))
+  ))
+#8 create the sercver and outputoutput 
+server <- function(input, output) {
+  output$cont <- renderPrint({
+    if (input$fun == 1 ){
+      print(summary(flights))
+    }
+    else if (input$fun == 2 ){
+      print(str(flights))
+    }
+    else if (input$fun == 3 ){
+      print(head(flights))
+    }
+    else if (input$fun == 4 ){
+      print(tail(flights))
+    }
+    else {
+      print(names(flights))
+    }
+  })
+  #9 create the output
+  output$meas <- renderPrint({
+    if (input$me == 1 ){
+      print(mean(flights[[input$var]],na.rm = TRUE))
+    }
+    else if (input$me == 2 ){
+      print(median(flights[[input$var]],na.rm = TRUE))
+    }
+    else if (input$me == 3 ){
+      print(max(flights[[input$var]],na.rm = TRUE))
+    }
+    else if (input$me == 4 ){
+      print(min(flights[[input$var]],na.rm = TRUE))
+    }
+    else if (input$me == 5 ){
+      print(range(flights[[input$var]],na.rm = TRUE))
+    }
+    else{
+      print(sd(flights[[input$var]],na.rm = TRUE))
+    }
+  })
+  
+  
+}
+#10 launch the app
+shinyApp(ui = ui, server = server)
+```
+
