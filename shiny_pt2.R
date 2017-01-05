@@ -60,7 +60,8 @@ server <- function(input, output) {
     
     if (input$plot_cat == 1 ){
       output$cat <- renderPlot({
-        ggplot (flights)+ aes (as.factor(flights[[input$var]]), fill = as.factor(Cancelled)) + 
+        ggplot (flights)+ aes (as.factor(flights[[input$var]])) +
+          labs(title=cat("Bar plot for", input$var), x=input$var,y="# of flights")+ theme(axis.text.x = element_text(angle=90))+
           geom_bar()
       })
     }else if (input$plot_cat == 2 ){
